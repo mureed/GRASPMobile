@@ -1,0 +1,28 @@
+apply plugin: 'android'
+android {
+    compileSdkVersion 10
+    buildToolsVersion '20.0.0'
+    defaultConfig {
+        applicationId 'it.fabaris.wfp.activities'
+        minSdkVersion 8
+        targetSdkVersion 10
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    compile files('lib/kxml2-2.2.3.jar')
+    compile files('lib/regexp-me.jar')
+    compile files('lib/joda-time-2.0.jar')
+    compile files('lib/apache-mime4j-core-0.7.jar')
+    compile files('lib/xercesImpl.jar')
+    compile files('lib/w3c-dom.jar')
+
+}
