@@ -88,6 +88,7 @@ public class FormEntryController {
         if (element.required && data == null) {//Se elemento obbligatorio e non c'e' una risposta
         	output= ANSWER_REQUIRED_BUT_EMPTY;
         } else if (!complexQuestion && !model.getForm().evaluateConstraint(index.getReference(), data)) {
+            commitAnswer(element, index, data);
         	output= ANSWER_CONSTRAINT_VIOLATED;
         } else if (!complexQuestion) {
             commitAnswer(element, index, data);

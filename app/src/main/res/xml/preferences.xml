@@ -27,6 +27,11 @@
             android:dialogTitle="@string/digit_server_port"
             android:key="server_port"
             android:title="@string/server_port" />
+
+        <EditTextPreference
+            android:dialogTitle="@string/digit_server_directory"
+            android:key="server_directory"
+            android:title="@string/server_directory" />
         <!-- 
         <EditTextPreference
             android:defaultValue="@string/default_server_url"

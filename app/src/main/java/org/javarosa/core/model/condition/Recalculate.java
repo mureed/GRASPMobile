@@ -86,6 +86,8 @@ public class Recalculate extends Triggerable {
 	 * 
 	 */
 	private static IAnswerData wrapData (Object val, int dataType) {
+
+
 		if ((val instanceof String && ((String)val).length() == 0) ||
 			(val instanceof Double && ((Double)val).isNaN())) {
 			return null;

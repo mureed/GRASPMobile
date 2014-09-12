@@ -289,6 +289,7 @@
 	<string name="error_sms_not_delivered">Error sms not delivered</string>
 	<string name="telephone_number">Please enter you telephone number</string>
 	<string name="telephone_number_country">Telephone number must be preceded by country code</string>
+	<string name="image_directory_creation_faild">Failed to create image directory</string>
 	<string name="server_not_online">The server is not online or the URL address is not correct</string>
 	<string name="phone_not_in_server">Phone number not in server&amp;s contact list</string>
 	<string name="server_on_line">Server Online</string>
@@ -336,6 +337,8 @@
 	<string name="server_IP">IP</string>
 	<string name="digit_server_port">Digit server port</string>
 	<string name="server_port">Port</string>
+    <string name="digit_server_directory">Digit virtual directory</string>
+    <string name="server_directory">Virtual directory</string>
 
     <string name="take_signature">Take Signature</string>
 	

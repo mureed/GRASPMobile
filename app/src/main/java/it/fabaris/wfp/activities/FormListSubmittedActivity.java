@@ -10,23 +10,36 @@
  ******************************************************************************/
 package it.fabaris.wfp.activities;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Base64;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ListView;
+
+import org.w3c.dom.Document;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.zip.GZIPOutputStream;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -34,50 +47,13 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
 
-import org.apache.james.mime4j.codec.DecoderUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
-import content.FormSavedAdapter;
 import content.FormSubmittedAdapter;
 import database.DbAdapterGrasp;
-
+import it.fabaris.wfp.provider.FormProvider.DatabaseHelper;
+import it.fabaris.wfp.provider.InstanceProviderAPI;
 import object.FormInnerListProxy;
 import utils.ApplicationExt;
-
-import it.fabaris.wfp.application.Collect;
-import it.fabaris.wfp.provider.InstanceProviderAPI;
-import it.fabaris.wfp.provider.FormProvider.DatabaseHelper;
-import it.fabaris.wfp.task.SaveToDiskTask;
-import it.fabaris.wfp.utility.FormCompletedDataDBUpdate;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.app.AlertDialog.Builder;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.util.Base64;
-import android.util.Log;
-import android.view.View;
-import android.webkit.MimeTypeMap;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 /**
  * Class that defines the tab for the list of the submitted forms

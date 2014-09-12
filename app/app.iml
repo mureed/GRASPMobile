@@ -63,7 +63,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="regexp-me" level="project" />
     <orderEntry type="library" exported="" name="joda-time-2.0" level="project" />
-    <orderEntry type="library" exported="" name="apache-mime4j-core-0.7" level="project" />
     <orderEntry type="library" exported="" name="xercesImpl" level="project" />
     <orderEntry type="library" exported="" name="kxml2-2.2.3" level="project" />
     <orderEntry type="library" exported="" name="w3c-dom" level="project" />

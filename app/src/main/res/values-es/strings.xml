@@ -333,4 +333,28 @@
 	
 	<string name="digit_server_port">Digit server port</string>
 	<string name="server_port">Port</string>
+
+    <string name="textcolor_foreground">Foreground color text</string>
+    <string name="change_textcolor_foreground">Choose foreground color text</string>
+    <string name="textcolor_background">Background color text</string>
+    <string name="change_textcolor_background">Choose background color text</string>
+    <string name="textcolor_mandatory_foreground">Foreground color of mandatory text</string>
+    <string name="change_textcolor_mandatory_foreground">Choose foreground color of mandatory text</string>
+    <string name="textcolor_mandatory_background">Background color of mandatory text</string>
+    <string name="change_textcolor_mandatory_background">Choose background color of mandatory text</string>
+    <string name="textcolor_error_foreground">Foreground color text on error</string>
+    <string name="change_textcolor_error_foreground">Choose foreground color text on error</string>
+    <string name="textcolor_error_background">Background color text on error</string>
+    <string name="change_textcolor_error_background">Choose background color text on error</string>
+    <string name="colors">Colors</string>
+
+
+    <string name="digit_server_directory">Digit virtual directory</string>
+    <string name="server_directory">Virtual directory</string>
+
+    <string name="take_signature">Take Signature</string>
+
+    <string name="send_form">Do you want to send the form?</string>
+
+    <string name="image_directory_creation_faild">Failed to create image directory</string>
 </resources>

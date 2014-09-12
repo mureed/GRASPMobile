@@ -168,7 +168,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
     // private static final int MENU_PREFERENCES = Menu.FIRST + 3;
     private static final int PROGRESS_DIALOG = 1;
     private static final int SAVING_DIALOG = 2;
-
+    static protected ColorHelper colorHelper;
     // Random ID
     private static final int DELETE_REPEAT = 654321;
 
@@ -519,10 +519,10 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                 imageURI = getContentResolver().insert(
                         Images.Media.EXTERNAL_CONTENT_URI, values);
 
- /*
-                 * Compress image
-                 */
-                compressImage(s, 400, 400, 100, 0);
+// /*
+//                 * Compress image
+//                 */
+//                compressImage(s, 400, 400, 100, 0);
 
                 if (mCurrentView != null) {
                     ImageWidget.previewPhoto(s, FormEntryActivity.this);
@@ -530,7 +530,8 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                     saveAnswersForCurrentScreen(DO_NOT_EVALUATE_CONSTRAINTS);
                     refreshCurrentView(null);
                 } else {
-                    createErrorDialog("Sorry, your image compressed and saved but can't able to view it, Please choose it from the gallery", false);
+                    System.out.println("Sorry, your image compressed and saved but can't able to view it, Please choose it from the gallery");
+//                    createErrorDialog("Sorry, your image compressed and saved but can't able to view it, Please choose it from the gallery", false);
                 }
 
                 break;
@@ -562,10 +563,8 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                 /**
                  *  Copy file to sdcard
                  */
-                String mInstanceFolder1 = mInstancePath.substring(0,
-                        mInstancePath.lastIndexOf("/") + 1);
-                String destImagePath = mInstanceFolder1 + "/"
-                        + System.currentTimeMillis() + ".jpg";
+                String mInstanceFolder1 = mInstancePath.substring(0,  mInstancePath.lastIndexOf("/") + 1);
+                String destImagePath = mInstanceFolder1 + "/"+ System.currentTimeMillis() + ".jpg";
 
                 File source = new File(sourceImagePath);
                 File newImage = new File(destImagePath);
@@ -589,10 +588,10 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                             Images.Media.EXTERNAL_CONTENT_URI, values);
                     Log.i(t, "Inserting image returned uri = " + imageURI.toString());
 
-                      /*
-                 * Compress image
-                 */
-                    compressImage(destImagePath, 400, 400, 100, 0);
+//                      /*
+//                 * Compress image
+//                 */
+//                    compressImage(destImagePath, 400, 400, 100, 0);
 
                     ((ODKView) mCurrentView).setBinaryData(imageURI);
                     ImageWidget.previewPhoto(destImagePath, FormEntryActivity.this);
@@ -793,10 +792,19 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                     /**
                      * check the contraints before to do swipe
                      */
+                int lestIndex=0;
                     for (FormIndex index : indexKeys) {
                         if (mFormController.getEvent(index) == FormEntryController.EVENT_QUESTION) {
                             int saveStatus = saveAnswer(answers.get(index), index,
                                     evaluateConstraints);
+
+//                            if(saveStatus==2)
+//                            {
+//
+//                                list.get(lestIndex).mQuestionText.setBackgroundColor(colorHelper.getMandatoryBackgroundColor());
+//                                list.get(lestIndex).mQuestionText.setTextColor(colorHelper.getMandatoryForeColor());
+//
+//                            }
                             if (arrValidForm.size() == 0) {
                                 if (evaluateConstraints
                                         && saveStatus != FormEntryController.ANSWER_OK) {
@@ -838,6 +846,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
                                 }
                             }
                         }
+                        lestIndex++;
                     }
                 } else {
                     System.out.println("View is null ................ ");
@@ -2049,8 +2058,7 @@ public class FormEntryActivity extends Activity implements AnimationListener,
             // Create new answer folder.
             String time = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
                     .format(Calendar.getInstance().getTime());
-            String file = mFormPath.substring(mFormPath.lastIndexOf('/') + 1,
-                    mFormPath.lastIndexOf('.'));
+            String file = mFormPath.substring(mFormPath.lastIndexOf('/') + 1,mFormPath.lastIndexOf('.'));
             String path = Collect.INSTANCES_PATH + "/" + file + "_" + time;
             if (FileUtils.createFolder(path)) {
                 mInstancePath = path + "/" + file + "_" + time + ".xml";

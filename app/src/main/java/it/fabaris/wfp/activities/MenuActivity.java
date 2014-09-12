@@ -64,6 +64,7 @@ public class MenuActivity extends Activity
     boolean isUrl = false;
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -150,6 +151,8 @@ public class MenuActivity extends Activity
 
             final EditText ETport = new EditText(this);
 
+            final EditText ETdirectory = new EditText(this);
+
             /**
              *IP SETTINGS
              */
@@ -189,10 +192,10 @@ public class MenuActivity extends Activity
                         if(isValidUrl("http://" + ip) & !isIP(ip)){
                             isUrl = true;
                             //set the edittext for the ip to "mobileconnection.aspx"
-                            ETport.setText("mobileconnection.aspx");
+                            ETport.setText("");
                             //set the preference for the ip at "mobileconnection.aspx"
                             SharedPreferences.Editor meditor = settings.edit();
-                            meditor.putString(PreferencesActivity.KEY_PORT, "mobileconnection.aspx");
+                            meditor.putString(PreferencesActivity.KEY_PORT, "");
                             meditor.commit();
                         }
                     }
@@ -225,7 +228,28 @@ public class MenuActivity extends Activity
             });
 
 
+/**
+ * Virtual directory SETTINGS
+ */
+            ETdirectory.setInputType(InputType.TYPE_CLASS_TEXT);
+            ETdirectory.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+            ETdirectory.addTextChangedListener(new TextWatcher() {
 
+                public void afterTextChanged(Editable s) {
+                    SharedPreferences.Editor meditor = settings.edit();
+                    meditor.putString(PreferencesActivity.KEY_DIRECTORY, ETdirectory.getEditableText().toString().trim());
+                    meditor.commit();
+                }
+
+                public void beforeTextChanged(CharSequence s, int start,
+                                              int count, int after) {
+                }
+
+                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count) {
+
+                }
+            });
             //-----------------------------------
             /**
              * LAYOUT SETTINGS
@@ -235,6 +259,7 @@ public class MenuActivity extends Activity
             TextView TVprotocol =  new TextView(MenuActivity.this);
             TextView TVip =  new TextView(MenuActivity.this);
             TextView TVport =  new TextView(MenuActivity.this);
+            TextView TVdirectory =  new TextView(MenuActivity.this);
 
             text1.setText("Server Telephone");
             text1.setTextSize(17);
@@ -243,6 +268,10 @@ public class MenuActivity extends Activity
             TVprotocol.setText("Protocol");
             TVip.setText("IP or URL");
             TVport.setText("Port");
+            TVdirectory.setText("Virtual directory");
+
+            ETport.setText("80");
+            ETdirectory.setText("grasp");
 
             //add to the principal LinearLayout "lila1" all the widgets
             lila1.addView(text1);//Server telephone
@@ -254,6 +283,9 @@ public class MenuActivity extends Activity
             lila1.addView(ETip);
             lila1.addView(TVport);//port
             lila1.addView(ETport);
+            lila1.addView(TVdirectory);//directory
+            lila1.addView(ETdirectory);
+
             lila1.setPadding(20, 0, 20, 0);
             alertSV.addView(lila1);//put the principal layout "lila1" into a scrool view...
             alert.setView(alertSV);//...then put the layout into the alert
@@ -271,22 +303,29 @@ public class MenuActivity extends Activity
 
                     String ip = null;
                     String port = null;
+                    String directory = null;
                     ip = ETip.getEditableText().toString(); //PreferencesActivity.KEY_IP;
                     port = ETport.getEditableText().toString(); //PreferencesActivity.KEY_PORT;
+                    directory = ETdirectory.getEditableText().toString(); //PreferencesActivity.KEY_DIRECTORY;
                     String serverurl = new String();
                     String protocol = settings.getString(PreferencesActivity.KEY_PROTOCOL,null);
 
 
                     if(protocol != null && ip != null && port != null){
                         if(!isUrl){//if there is not been inserted an ip
-                            serverurl = protocol+"://"+ip+":"+port;
+                            serverurl = protocol+"://"+ip+":"+port+((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+PreferencesActivity.serviceName;
                         }else{//if there is been inserted a url and not an ip
-                            serverurl = protocol+"://"+ip+"/"+port;
+                            serverurl = protocol+"://"+ip+((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+PreferencesActivity.serviceName;
                             isUrl = false;
                         }
 
+
+
                         serverurl = serverurl.trim();//LL 16-05-2014
                     }
+
+                    Log.i("The server url is ",serverurl);
+                    System.out.println("The server url is "+serverurl);
 
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString(PreferencesActivity.KEY_SERVER_TELEPHONE, numTel);

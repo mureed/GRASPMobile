@@ -36,6 +36,7 @@ public class Collect extends Application {
     public static final String FABARISODK_ROOT = Environment.getExternalStorageDirectory() + "/GRASP";
     public static final String FORMS_PATH = FABARISODK_ROOT + "/forms";//cartella che contiene gli xml con i template delle form
     public static final String INSTANCES_PATH = FABARISODK_ROOT + "/instances";//cartella che contiene gli xml con le risposte alle domande
+    public static final String IMAGES_PATH = FABARISODK_ROOT + "/GRASPImages";//cartella che contiene gli xml con le risposte alle domande
     public static final String CACHE_PATH = FABARISODK_ROOT + "/.cache";
     public static final String METADATA_PATH = FABARISODK_ROOT + "/metadata/";//cartella che contiene il forms.db e il message.db
     public static final String TMPFILE_PATH = CACHE_PATH + "/tmp.jpg";

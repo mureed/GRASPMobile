@@ -9,8 +9,10 @@ package it.fabaris.wfp.activities;
 import java.io.File;
 import java.io.IOException;
 
+import it.fabaris.wfp.application.Collect;
 import utils.ApplicationExt;
 import database.DbAdapterGrasp;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +31,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 /**
- * Class that manage the splashscreen at the start of the app. 
+ * Class that manage the splashscreen at the start of the app.
  * In it we can set client phone number in the preferences
  */
 public class SplashScreenActivity extends Activity {
@@ -45,60 +47,64 @@ public class SplashScreenActivity extends Activity {
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         String s = null;
-        TelephonyManager tMgr =(TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = ((TelephonyManager) tMgr).getLine1Number();
 
 
-        settings  =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        numClient = settings.getString(PreferencesActivity.KEY_CLIENT_TELEPHONE,getString(R.string.default_client_telephone));
-        if(numClient.equalsIgnoreCase("")){
+        settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        numClient = settings.getString(PreferencesActivity.KEY_CLIENT_TELEPHONE, getString(R.string.default_client_telephone));
+        if (numClient.equalsIgnoreCase("")) {
             setContentView(R.layout.settings_screen);
             input = (EditText) findViewById(R.id.phoneNumber);
             input.setInputType(InputType.TYPE_CLASS_PHONE);
-            Button buttonForms = (Button)findViewById(R.id.phoneNumberDone);
+            Button buttonForms = (Button) findViewById(R.id.phoneNumberDone);
             /**
              * on click, if there is a phone number to
              * save, we save it in the preferences
              */
-            buttonForms.setOnClickListener(new View.OnClickListener(){
+            buttonForms.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v){
+                public void onClick(View v) {
                     numTel = input.getEditableText().toString();
-                    if(numTel.equalsIgnoreCase("")){
-                        Toast toast = Toast.makeText(getApplicationContext(), R.string.telephone_number,Toast.LENGTH_LONG);
+                    if (numTel.equalsIgnoreCase("")) {
+                        Toast toast = Toast.makeText(getApplicationContext(), R.string.telephone_number, Toast.LENGTH_LONG);
                         toast.show();
-                    }else if(numTel.substring(0, 1).equalsIgnoreCase("+")){
+                    } else if (numTel.substring(0, 1).equalsIgnoreCase("+")) {
                         final SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PreferencesActivity.KEY_CLIENT_TELEPHONE, numTel);
                         editor.commit();
-                        Intent myIntent = new Intent(v.getContext(),MenuActivity.class);
 
+                        if (!createImageFolders(numTel)) {
+                            Toast toast = Toast.makeText(getApplicationContext(), R.string.image_directory_creation_faild, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+
+                        Intent myIntent = new Intent(v.getContext(), MenuActivity.class);
                         startActivity(myIntent);
                         finish();
-                    }else{
-                        Toast toast = Toast.makeText(getApplicationContext(), R.string.telephone_number_country,Toast.LENGTH_LONG);
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(), R.string.telephone_number_country, Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }
             });
-        }else{
+        } else {
             setContentView(R.layout.splash_screen);
             final SplashScreenActivity sPlashScreen = this;
             splashTread = new Thread() {
                 @Override
                 public void run() {
                     try {
-                        synchronized(this){
+                        synchronized (this) {
                             wait(2000);
                         }
-
-                    } catch(InterruptedException e) {}
-                    finally {
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
                         finish();
                         Intent i = new Intent();
                         i.setClass(sPlashScreen, MenuActivity.class);
@@ -111,13 +117,31 @@ public class SplashScreenActivity extends Activity {
         }
     }
 
+    private boolean createImageFolders(String phoneNumber) {
+        try {
+            /**
+             * Create binary files folder (Images,..)
+             */
+            if (phoneNumber != null) {
+                File dir = new File(Collect.IMAGES_PATH + "/" + phoneNumber.replaceAll("\\+", ""));
+                if (!dir.exists()) {
+                    if (!dir.mkdirs()) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-    private void FirstRun() throws IOException
-    {
+
+    private void FirstRun() throws IOException {
         SharedPreferences settings = this.getSharedPreferences("GRASP", 0);
         boolean firstrun = settings.getBoolean("firstrun", true);
-        if (firstrun)
-        {
+        if (firstrun) {
             /**
              *  Checks to see if we've ran the application  
              */
@@ -128,9 +152,7 @@ public class SplashScreenActivity extends Activity {
              *  If not, run these methods: 
              */
             SetDirectory();
-        }
-        else
-        {
+        } else {
             // Otherwise start the application here: 
         }
     }
@@ -138,22 +160,18 @@ public class SplashScreenActivity extends Activity {
     /**
      * to copy the grasp db in the SD
      * (grasp db has been dismissed)
+     *
      * @throws IOException
      */
-    private void SetDirectory() throws IOException
-    {
-        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
-        {
+    private void SetDirectory() throws IOException {
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
             File grasp = new File(basepath); //+ "grasp"); 
-            if (!grasp.exists())
-            {
+            if (!grasp.exists()) {
                 grasp.mkdirs();
             }
             copyGraspDatabaseToSD(""); // Then run the method to copy the file. 
 
-        }
-        else if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED_READ_ONLY))
-        {
+        } else if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED_READ_ONLY)) {
             Toast.makeText(getApplicationContext(), getString(R.string.update_toast), Toast.LENGTH_SHORT).show();
         }
 
@@ -162,13 +180,13 @@ public class SplashScreenActivity extends Activity {
     /**
      * to copy the grasp db in the SD.
      * grasp db has been dismissed
+     *
      * @param path
      * @throws IOException
      */
-    private void copyGraspDatabaseToSD(String path) throws IOException
-    {
+    private void copyGraspDatabaseToSD(String path) throws IOException {
         mDb = new DbAdapterGrasp(this);
-    	/*
+        /*
     	//CORRETTO
         AssetManager assetManager = this.getAssets(); 
         String assets[] = null; 
@@ -234,26 +252,20 @@ public class SplashScreenActivity extends Activity {
 
     /**
      * not used
-     *
      */
-    private class CopyTask extends AsyncTask<Void, Void, Void>
-    {
+    private class CopyTask extends AsyncTask<Void, Void, Void> {
         @Override
-        protected Void doInBackground(Void... params)
-        {
+        protected Void doInBackground(Void... params) {
             Looper.prepare();
-            try
-            {
+            try {
                 FirstRun();
-            }
-            catch (IOException e1)
-            {
+            } catch (IOException e1) {
                 e1.printStackTrace();
             }
             return null;
         }
-        protected void onProgressUpdate(Void... unsued)
-        {
+
+        protected void onProgressUpdate(Void... unsued) {
             Toast messaggio = Toast.makeText(getApplicationContext(), "E' in corso la copia dei contenuti...", Toast.LENGTH_LONG);
             messaggio.show();
         }

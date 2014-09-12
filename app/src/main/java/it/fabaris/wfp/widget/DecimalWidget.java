@@ -48,6 +48,7 @@ import org.javarosa.core.model.data.IntegerData;
 import org.javarosa.core.model.data.SelectOneData;
 import org.javarosa.core.model.data.StringData;
 import org.javarosa.core.model.data.helper.Selection;
+import org.javarosa.form.api.FormEntryController;
 import org.javarosa.form.api.FormEntryPrompt;
 import org.joda.time.DateTime;
 
@@ -133,12 +134,7 @@ public class DecimalWidget extends StringWidget    //QuestionAndStringAswerWidge
 			}
 			@Override
 			public void afterTextChanged(Editable s) {
-				
-				
-				
-				
-				
-				 
+
 //				if(before==count)return;
 				try{
 					HashMap<FormIndex, IAnswerData> answers = ((ODKView) ((FormEntryActivity) context).mCurrentView).getAnswers();
@@ -149,14 +145,14 @@ public class DecimalWidget extends StringWidget    //QuestionAndStringAswerWidge
 						int saveStatus = ((FormEntryActivity) context).saveAnswer(answers.get(index), index, true);
 						switch (saveStatus) {
 						//to assign the right color to the widget that represent the question
-						case 0:
+						case FormEntryController.ANSWER_OK:
 							assignStandardColors();
 							if(mReadOnly)
 							{
 								break;
 							}
 							break;
-						case 1:	
+						case FormEntryController.ANSWER_REQUIRED_BUT_EMPTY:
 							if((mAnswer.getText().toString()).equals("")){
 								assignMandatoryColors();
 							}else {
@@ -164,7 +160,7 @@ public class DecimalWidget extends StringWidget    //QuestionAndStringAswerWidge
 								break;
 							}
 							//costanti violate
-						case 2:	
+						case FormEntryController.ANSWER_CONSTRAINT_VIOLATED:
 							/*
 							if(mReadOnly)
 							{
@@ -295,13 +291,13 @@ public class DecimalWidget extends StringWidget    //QuestionAndStringAswerWidge
         		String result = nf.format(d);//new DecimalFormat("##0.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(d);
     
         		mAnswer.setText(result);
-        	}
-        	catch(Exception e)
+        	}catch(Exception e)
         	{
         		i = (Integer) mPrompt.getAnswerValue().getValue();
         		mAnswer.setText(String.valueOf(i));
         	}
-        }        
+        }
+        System.out.println("--------------------------------------");
         syncColors();
 	}
 
@@ -312,9 +308,12 @@ public class DecimalWidget extends StringWidget    //QuestionAndStringAswerWidge
     public IAnswerData getAnswer() {
         String s = mAnswer.getText().toString();
         if (s == null || s.equals("")) {
-            return null;
+            if(mPrompt.isRequired()){
+                return null;
+            }else{
+                return new DecimalData(Double.parseDouble("0"));
+            }
         } else {
-        	
         	try {
                 return new DecimalData(Double.parseDouble(s));
             } catch (Exception e) {

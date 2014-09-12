@@ -319,14 +319,11 @@ public abstract class QuestionAndStringAswerWidget extends QuestionWidget implem
 			assignMandatoryColors();
 		}
 		*/
-		/*
-		else if(mPrompt.isReadOnly() && err == true)
+		else if(err)  // modified by Mureed to view the red fields in decimal errors
 		{
 			err = false;
 			assignErrorColors();
-		}
-		*/
-		else 
+		}else
 		{
 			assignStandardColors();
 		}

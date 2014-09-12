@@ -4,6 +4,7 @@ import it.fabaris.wfp.activities.FormListActivity;
 import it.fabaris.wfp.activities.FormListCompletedActivity;
 import it.fabaris.wfp.activities.PreferencesActivity;
 import it.fabaris.wfp.activities.R;
+import it.fabaris.wfp.application.Collect;
 import it.fabaris.wfp.listener.MyCallback;
 import it.fabaris.wfp.logic.PropertyManager;
 import it.fabaris.wfp.provider.FormProvider.DatabaseHelper;
@@ -123,7 +124,7 @@ public class HttpSendAllFormsTask extends AsyncTask<String, Void, String> {
         this.context = context;
 
 		/*
-		 * set the url format depending from the server
+         * set the url format depending from the server
 		 */
         if (http.contains(".aspx"))//if the server is web reporting
         {
@@ -242,18 +243,27 @@ public class HttpSendAllFormsTask extends AsyncTask<String, Void, String> {
          */
         byte[] fileBytes = FileUtils.getFileAsBytes(new File(filePath));
         Hashtable<String, String> images = new Hashtable<String, String>();
+
+
         /**
          *  get the root of the saved and template instances
          */
         TreeElement dataElements = XFormParser.restoreDataModel(fileBytes, null).getRoot();
-
+        String imageName = "";
         for (int j = 0; j < dataElements.getNumChildren(); j++) {
             if (dataElements.getChildAt(j) != null && dataElements.getChildAt(j).getValue() != null && dataElements.getChildAt(j).getValue().getDisplayText().indexOf("jpg") > 0) {
-                File image = new File(filePath.substring(0, filePath.lastIndexOf("/") + 1) + dataElements.getChildAt(j).getValue().getDisplayText());
-                if (image.exists()) {
+                imageName = dataElements.getChildAt(j).getValue().getDisplayText();
+                File originalImage = new File(filePath.substring(0, filePath.lastIndexOf("/") + 1) + imageName);
+                if (originalImage.exists()) {
                     try {
-                        String imageAsString = Base64.encodeToString(FileUtils.convertImageToByte(image), Base64.URL_SAFE);
-                        images.put(dataElements.getChildAt(j).getName(), imageAsString);
+                        String plus="\\+";
+                        String syncImagesPath = Collect.IMAGES_PATH + "/" + phone.replaceAll(plus,"");
+                        if (FileUtils.createFolder(syncImagesPath)) {
+                            File newImage = new File(syncImagesPath + "/" + imageName);
+                            FileUtils.copyFile(originalImage, newImage);
+                            images.put(dataElements.getChildAt(j).getName(), phone.replaceAll(plus,"") + "\\" + imageName);
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -402,7 +412,6 @@ public class HttpSendAllFormsTask extends AsyncTask<String, Void, String> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(xml);
         return xml;
     }
 
@@ -468,11 +477,11 @@ public class HttpSendAllFormsTask extends AsyncTask<String, Void, String> {
      * @throws TransformerException
      */
     public String trasformItem(Transformer trans, Document doc,
-                               FormInnerListProxy form) throws TransformerException {
+                               FormInnerListProxy form) throws TransformerException, IOException {
         StringWriter sw = new StringWriter();
         StreamResult result = new StreamResult(sw);
 
-        //todo add the image binary to the xml file
+
         Hashtable<String, String> images = readSubmittedImages(form.getStrPathInstance());
         if (images != null && images.size() > 0) {
             Set<String> keys = images.keySet();
@@ -484,11 +493,31 @@ public class HttpSendAllFormsTask extends AsyncTask<String, Void, String> {
         }
 
 
-        DOMSource source = new DOMSource(doc);
-        trans.transform(source, result);
-        String xmlString = sw.toString();
-        String apos = "apos=\"'\"";
-        xmlString = xmlString.replace(apos, "");
+//        //todo add the image binary to the xml file
+//        Hashtable<String, String> images = readSubmittedImages(form.getStrPathInstance());
+//        if (images != null && images.size() > 0) {
+//            Set<String> keys = images.keySet();
+//            for (String key : keys) {
+//                NodeList nodeList = doc.getElementsByTagName(key);
+//                Node node = nodeList.item(0);
+//                node.setTextContent(images.get(key));
+//            }
+//        }
+
+
+//        DOMSource source = new DOMSource(doc);
+//        trans.transform(source, result);
+//        String xmlString = sw.toString();
+//        String apos = "apos=\"'\"";
+//        xmlString = xmlString.replace(apos, "");
+
+
+        NodeList nodeList = doc.getElementsByTagName("data");
+        Node node = nodeList.item(0);
+        node.getAttributes().removeNamedItem("apos");
+
+        String xmlString = getStringFromDoc(doc);
+
         /**
          *  add unique code to data xml response
          */
@@ -508,6 +537,14 @@ public class HttpSendAllFormsTask extends AsyncTask<String, Void, String> {
         String hour = Integer.toString(gc.get(Calendar.HOUR_OF_DAY));
         String date = day + "/" + month + "/" + year;
         return xmlString = xmlString + "?formhour?" + date + "_" + hour;
+    }
+
+    public String getStringFromDoc(Document doc) throws IOException {
+        com.sun.org.apache.xml.internal.serialize.OutputFormat format = new com.sun.org.apache.xml.internal.serialize.OutputFormat(doc);
+        StringWriter stringOut = new StringWriter();
+        com.sun.org.apache.xml.internal.serialize.XMLSerializer serial = new com.sun.org.apache.xml.internal.serialize.XMLSerializer(stringOut, format);
+        serial.serialize(doc);
+        return stringOut.toString();
     }
 
     /**

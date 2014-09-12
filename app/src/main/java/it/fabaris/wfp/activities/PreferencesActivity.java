@@ -21,6 +21,7 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.fabaris.wfp.application.Collect;
 import utils.ApplicationExt;
 
 import it.fabaris.wfp.provider.FormProvider.DatabaseHelper;
@@ -82,6 +83,9 @@ public class PreferencesActivity extends PreferenceActivity implements
     public static String KEY_PROTOCOL = "list_protocol";
     public static String KEY_IP = "server_ip";
     public static String KEY_PORT = "server_port";
+    public static String KEY_DIRECTORY = "server_directory";
+
+    public final static String serviceName="mobileConnection.aspx";
 
 
 
@@ -129,14 +133,24 @@ public class PreferencesActivity extends PreferenceActivity implements
          */
         String ip = settings.getString(PreferencesActivity.KEY_IP,null);
         String port = settings.getString(PreferencesActivity.KEY_PORT,null);
+        String directory = settings.getString(PreferencesActivity.KEY_DIRECTORY,null);
+
         if(ip != null){
             EditTextPreference mIpPreference = (EditTextPreference) findPreference(KEY_IP);
             mIpPreference.setSummary(mIpPreference.getText());
         }
+
         if(port != null){
             EditTextPreference mPortPreference = (EditTextPreference) findPreference(KEY_PORT);
             mPortPreference.setSummary(mPortPreference.getText());
         }
+
+        if(directory != null){
+            EditTextPreference mDirectoryPreference = (EditTextPreference) findPreference(KEY_DIRECTORY);
+            mDirectoryPreference.setSummary(mDirectoryPreference.getText());
+        }
+
+
         /**
          * settings protocol
          */
@@ -216,11 +230,12 @@ public class PreferencesActivity extends PreferenceActivity implements
         {
             public boolean onPreferenceClick(Preference pref)
             {
-                SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
-                String httpServer = settings.getString(PreferencesActivity.APP_URL, getString(R.string.new_app_url));
+//                SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(PreferencesActivity.this);
+//                String httpServer = settings.getString(PreferencesActivity.APP_URL, getString(R.string.new_app_url));
 
                 DownloadFile downloadFile = new DownloadFile();
-                downloadFile.execute(getString(R.string.new_app_url));
+//                downloadFile.execute(getString(R.string.new_app_url));
+                downloadFile.execute(getAPKURL());
                 return true;
             }
         });
@@ -241,13 +256,16 @@ public class PreferencesActivity extends PreferenceActivity implements
 
                     String ip = (settings.getString(PreferencesActivity.KEY_IP, getString(R.string.server_IP))).trim();
                     String port = (settings.getString(PreferencesActivity.KEY_PORT, getString(R.string.server_port))).trim();
+                    String directory = (settings.getString(PreferencesActivity.KEY_DIRECTORY, getString(R.string.server_directory))).trim();
+
+
 
                     editor.commit();
 
                     if(isValidUrl("http://"+ip) & !isIP(ip)){
-                        serverurl = "http" + "://" + ip +"/" + port;
+                        serverurl = "http" + "://" + ip  +((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName;
                     }else{
-                        serverurl = "http" + "://" + ip +":" + port;
+                        serverurl = "http" + "://" + ip +":" + port +((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName;
                     }
 
 
@@ -265,12 +283,14 @@ public class PreferencesActivity extends PreferenceActivity implements
                     String serverurl = new String();
                     String ip = (settings.getString(PreferencesActivity.KEY_IP, getString(R.string.server_IP))).trim();
                     String port = (settings.getString(PreferencesActivity.KEY_PORT, getString(R.string.server_port))).trim();
+                    String directory = (settings.getString(PreferencesActivity.KEY_DIRECTORY, getString(R.string.server_directory))).trim();
+
                     editor.commit();
 
                     if(isValidUrl("https://"+ip) & !isIP(ip)){
-                        serverurl = "https" + "://" + ip +"/" + port;
+                        serverurl = "https" + "://" + ip +((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName;
                     }else{
-                        serverurl = "https" + "://" + ip +":" + port;
+                        serverurl = "https" + "://" + ip +":" + port+((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName;
                     }
 
                     editor.putString(PreferencesActivity.KEY_SERVER_URL, serverurl);
@@ -335,6 +355,8 @@ public class PreferencesActivity extends PreferenceActivity implements
             updateServerIP();
         }else if(key.equals(KEY_PORT)){
             updateServerPort();
+        }else if(key.equals(KEY_DIRECTORY)){
+            updateServerDirectory();
         }
     }
 
@@ -382,23 +404,24 @@ public class PreferencesActivity extends PreferenceActivity implements
         String protoc = (getProtocolFromRadioButton(getString(R.string.portocol_choice))).trim();
         String ip = (settings.getString(PreferencesActivity.KEY_IP, getString(R.string.server_IP))).trim();
 
+
         if(isValidUrl(protoc+"://"+ip) & !isIP(ip)){//if as ip there is an url
-            Log.i("e' un url valido",ip);
             EditTextPreference mPortPreference = (EditTextPreference) findPreference(KEY_PORT);
-            mPortPreference.setText("mobileconnection.aspx");
+            mPortPreference.setText("");
             SharedPreferences.Editor editor = settings.edit();
-            editor.putString(PreferencesActivity.KEY_PORT, "mobileconnection.aspx");
+            editor.putString(PreferencesActivity.KEY_PORT, "");
             editor.commit();
 
             String port = (settings.getString(PreferencesActivity.KEY_PORT, getString(R.string.server_port))).trim();
-            serverurl = (protoc + "://" + ip +"/" + port).trim();
+            String directory = (settings.getString(PreferencesActivity.KEY_DIRECTORY, getString(R.string.server_directory))).trim();
+            serverurl = (protoc + "://" + ip +"/" + ((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName).trim();
 
         }else{
-            Log.i("NON e' un url valido",ip);
             String port = (settings.getString(PreferencesActivity.KEY_PORT, getString(R.string.server_port))).trim();
-            serverurl = (protoc + "://" + ip +":" + port).trim();
+            String directory = (settings.getString(PreferencesActivity.KEY_DIRECTORY, getString(R.string.server_directory))).trim();
+
+            serverurl = (protoc + "://" + ip +":" + port+((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName).trim();
         }
-        Log.i("serverurl",serverurl);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(PreferencesActivity.KEY_SERVER_URL, serverurl);
         editor.commit();
@@ -417,15 +440,57 @@ public class PreferencesActivity extends PreferenceActivity implements
         String protoc = (getProtocolFromRadioButton(getString(R.string.portocol_choice))).trim();
         String ip = (settings.getString(PreferencesActivity.KEY_IP, getString(R.string.server_IP))).trim();
         String port = (settings.getString(PreferencesActivity.KEY_PORT, getString(R.string.server_port))).trim();
+        String directory = (settings.getString(PreferencesActivity.KEY_DIRECTORY, getString(R.string.server_directory))).trim();
 
         if(isValidUrl(protoc+"://"+ip) & !isIP(ip)){
-            serverurl = protoc + "://" + ip +"/" + port;
+            serverurl = protoc + "://" + ip +"/" + port+((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName;
         }else{
-            serverurl = protoc + "://" + ip +":" + port;
+            serverurl = protoc + "://" + ip +":" + port+((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName;
         }
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(PreferencesActivity.KEY_SERVER_URL, serverurl);
         editor.commit();
+    }
+
+    private void updateServerDirectory(){
+        EditTextPreference mDirectPreference = (EditTextPreference) findPreference(KEY_DIRECTORY);
+        mDirectPreference.setSummary(mDirectPreference.getText());
+        SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String serverurl = new String();
+
+        String protoc = (getProtocolFromRadioButton(getString(R.string.portocol_choice))).trim();
+        String ip = (settings.getString(PreferencesActivity.KEY_IP, getString(R.string.server_IP))).trim();
+        String port = (settings.getString(PreferencesActivity.KEY_PORT, getString(R.string.server_port))).trim();
+        String directory = (settings.getString(PreferencesActivity.KEY_DIRECTORY, getString(R.string.server_directory))).trim();
+
+        if(isValidUrl(protoc+"://"+ip) & !isIP(ip)){
+            serverurl = protoc + "://" + ip +"/" + ((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName;
+        }else{
+            serverurl = protoc + "://" + ip +":" + port+((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/"+serviceName;
+        }
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(PreferencesActivity.KEY_SERVER_URL, serverurl);
+        editor.commit();
+    }
+
+
+    private String getAPKURL(){
+        String serverURL = new String();
+
+        SharedPreferences settings =  PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String protoc = (getProtocolFromRadioButton(getString(R.string.portocol_choice))).trim();
+        String ip = (settings.getString(PreferencesActivity.KEY_IP, getString(R.string.server_IP))).trim();
+        String port = (settings.getString(PreferencesActivity.KEY_PORT, getString(R.string.server_port))).trim();
+        String directory = (settings.getString(PreferencesActivity.KEY_DIRECTORY, getString(R.string.server_directory))).trim();
+
+        if(isValidUrl(protoc+"://"+ip) & !isIP(ip)){
+            serverURL = protoc + "://" + ip +"/" + ((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/Public/grasp.apk";
+        }else{
+            serverURL = protoc + "://" + ip + ((port!=null && port.trim().length()>0)?(":"  + port):"")+((directory!=null && directory.trim().length()>0)?("/" + directory):"")+"/Public/grasp.apk";
+        }
+        Log.i("The server url is ",serverURL);
+        System.out.println("The server url is "+serverURL);
+        return serverURL;
     }
 
     /**
@@ -445,6 +510,25 @@ public class PreferencesActivity extends PreferenceActivity implements
         mClientTelephonePreference = (EditTextPreference) findPreference(KEY_CLIENT_TELEPHONE);
         mClientTelephonePreference.setSummary(mClientTelephonePreference.getText());
         mClientTelephonePreference.getEditText().setInputType(InputType.TYPE_CLASS_PHONE);
+        createImageFolders(mClientTelephonePreference.getText().trim());
+    }
+
+    private boolean createImageFolders(String phoneNumber){
+        try{
+            /**
+             * Create binary files folder (Images,..)
+             */
+            File dir = new File(Collect.IMAGES_PATH +"/"+ phoneNumber.replaceAll("\\+",""));
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    return false;
+                }
+            }
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**

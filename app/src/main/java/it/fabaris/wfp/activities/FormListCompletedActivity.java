@@ -10,6 +10,7 @@
  ******************************************************************************/
 package it.fabaris.wfp.activities;
 
+import it.fabaris.wfp.application.Collect;
 import it.fabaris.wfp.listener.MyCallback;
 import it.fabaris.wfp.provider.FormProvider.DatabaseHelper;
 import it.fabaris.wfp.provider.InstanceProviderAPI;
@@ -181,8 +182,8 @@ public class FormListCompletedActivity extends Activity implements MyCallback {
         lock = new ReentrantLock();
         cond = lock.newCondition();
 
-        settings = PreferenceManager
-                .getDefaultSharedPreferences(getBaseContext());
+        settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
         connectionType = settings.getString(
                 PreferencesActivity.KEY_CONNECTION_TYPE,
                 getString(R.string.default_connection_type));
@@ -203,7 +204,7 @@ public class FormListCompletedActivity extends Activity implements MyCallback {
         complete = getIntent().getExtras().getParcelableArrayList("completed");
 
 		/*LL 14-05-2014 eliminato per dismissione del db grasp
-		completed = new ArrayList<FormInnerListProxy>();
+        completed = new ArrayList<FormInnerListProxy>();
 		completed = getIntent().getExtras().getParcelableArrayList("complete");
 		*/
 
@@ -929,8 +930,11 @@ public class FormListCompletedActivity extends Activity implements MyCallback {
                                FormInnerListProxy form) throws TransformerException, IOException {
         StringWriter sw = new StringWriter();
         StreamResult result = new StreamResult(sw);
-//added by mureed
-        //todo add the image binary to the xml file
+/**
+ * added by mureed
+ * add the image path to the xml file
+ */
+
         Hashtable<String, String> images = readSubmittedImages(form.getStrPathInstance());
         if (images != null && images.size() > 0) {
             Set<String> keys = images.keySet();
@@ -945,7 +949,7 @@ public class FormListCompletedActivity extends Activity implements MyCallback {
         Node node = nodeList.item(0);
         node.getAttributes().removeNamedItem("apos");
 
-        String xmlString =getStringFromDoc(doc);
+        String xmlString = getStringFromDoc(doc);
 
         //removed by mureed
 //        DOMSource source = new DOMSource(doc);
@@ -977,9 +981,9 @@ public class FormListCompletedActivity extends Activity implements MyCallback {
     }
 
     public String getStringFromDoc(Document doc) throws IOException {
-        com.sun.org.apache.xml.internal.serialize.OutputFormat format    = new com.sun.org.apache.xml.internal.serialize.OutputFormat(doc);
-        StringWriter stringOut = new StringWriter ();
-        com.sun.org.apache.xml.internal.serialize.XMLSerializer serial   = new com.sun.org.apache.xml.internal.serialize.XMLSerializer(stringOut,format);
+        com.sun.org.apache.xml.internal.serialize.OutputFormat format = new com.sun.org.apache.xml.internal.serialize.OutputFormat(doc);
+        StringWriter stringOut = new StringWriter();
+        com.sun.org.apache.xml.internal.serialize.XMLSerializer serial = new com.sun.org.apache.xml.internal.serialize.XMLSerializer(stringOut, format);
         serial.serialize(doc);
         return stringOut.toString();
     }
@@ -1002,18 +1006,27 @@ public class FormListCompletedActivity extends Activity implements MyCallback {
          */
         byte[] fileBytes = FileUtils.getFileAsBytes(new File(filePath));
         Hashtable<String, String> images = new Hashtable<String, String>();
+
+
         /**
          *  get the root of the saved and template instances
          */
         TreeElement dataElements = XFormParser.restoreDataModel(fileBytes, null).getRoot();
-
+        String imageName = "";
         for (int j = 0; j < dataElements.getNumChildren(); j++) {
             if (dataElements.getChildAt(j) != null && dataElements.getChildAt(j).getValue() != null && dataElements.getChildAt(j).getValue().getDisplayText().indexOf("jpg") > 0) {
-                File image = new File(filePath.substring(0, filePath.lastIndexOf("/") + 1) + dataElements.getChildAt(j).getValue().getDisplayText());
-                if (image.exists()) {
+                imageName = dataElements.getChildAt(j).getValue().getDisplayText();
+                File originalImage = new File(filePath.substring(0, filePath.lastIndexOf("/") + 1) + imageName);
+                if (originalImage.exists()) {
                     try {
-                        String imageAsString = Base64.encodeToString(FileUtils.convertImageToByte(image), Base64.URL_SAFE);
-                        images.put(dataElements.getChildAt(j).getName(), imageAsString);
+                        String plus="\\+";
+                        String syncImagesPath = Collect.IMAGES_PATH + "/" + numClient.replaceAll(plus,"");
+                        if (FileUtils.createFolder(syncImagesPath)) {
+                            File newImage = new File(syncImagesPath + "/" + imageName);
+                            FileUtils.copyFile(originalImage, newImage);
+                            images.put(dataElements.getChildAt(j).getName(), numClient.replaceAll(plus,"") + "\\" + imageName);
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -1022,6 +1035,7 @@ public class FormListCompletedActivity extends Activity implements MyCallback {
         }
         return images;
     }
+
 
     /**
      * invio della form tramite network

@@ -252,5 +252,110 @@
 	
 	<string name="digit_server_port">Digit server port</string>
 	<string name="server_port">Port</string>
+
+
+    <string name="date">Date:</string>
+    <string name="last_saved_date">Last saved:</string>
+    <string name="by">By:</string>
+    <string name="submitted_on">Submitted on:</string>
+
+    <string name="update_toast">Can\'\t download updates: SD not present</string>
+
+    <string name="form_present">This form already exist in saved list, do you want continue?</string>
+    <string name="delete_form">Do you want to delete the selected form?</string>
+
+
+    <string name="send_all">Send all form</string>
+    <string name="grasp">GRASP - Geo Referential realtime Acquisition Statistic Platform</string>
+    <string name="designed">Designed and Developed by Brains Engineering srl</string>
+    <string name="tab_new">New</string>
+    <string name="tab_saved">Saved</string>
+    <string name="tab_completed">Completed</string>
+    <string name="tab_submitted">Submitted</string>
+    <string name="tab_finalized">Pending</string>
+
+    <string name="bad_uri">Bad URI: </string>
+    <string name="parent_form_not_exist">Parent form does not exist </string>
+    <string name="more_form">More than one possible parent form</string>
+    <string name="unrecognized_uri">unrecognized URI:</string>
+    <string name="form_uncompleted">Form uncompleted</string>
+    <string name="blank_answer">The form is uncompleted please check blank answer</string>
+    <string name="server_url_not_inserted">The server url is not inserted, please enter it</string>
+    <string name="negative_choise">No</string>
+    <string name="positive_choise">Ok</string>
+    <string name="send_form">Do you want to send the form?</string>
+
+    <string name="check_new_app">Update the Application</string>
+
+    <string name="checking_server">Checking server...</string>
+    <string name="negative">No</string>
+
+     <string name="textcolor_foreground">Foreground color text</string>
+    <string name="change_textcolor_foreground">Choose foreground color text</string>
+    <string name="textcolor_background">Background color text</string>
+    <string name="change_textcolor_background">Choose background color text</string>
+    <string name="textcolor_mandatory_foreground">Foreground color of mandatory text</string>
+    <string name="change_textcolor_mandatory_foreground">Choose foreground color of mandatory text</string>
+    <string name="textcolor_mandatory_background">Background color of mandatory text</string>
+    <string name="change_textcolor_mandatory_background">Choose background color of mandatory text</string>
+    <string name="textcolor_error_foreground">Foreground color text on error</string>
+    <string name="change_textcolor_error_foreground">Choose foreground color text on error</string>
+    <string name="textcolor_error_background">Background color text on error</string>
+    <string name="change_textcolor_error_background">Choose background color text on error</string>
+    <string name="colors">Colors</string>
+
+    <string name="passwordText">Enter the password</string>
+    <string name="button_in">Login</string>
+    <string name="suggest">...password</string>
+    <string name="password_error">The password you typed is incorrect</string>
+
+    <string name="imported">Form correctly imported</string>
+    <string name="number_error">The server telephone number is not inserted, please enter it</string>
+    <string name="sending_sms">Sending data to server, please wait</string>
+    <string name="generic_error">Generic error</string>
+    <string name="error_no_service">Error no service available</string>
+    <string name="error_no_pdu">Errore no PDU found</string>
+    <string name="error_network">Error network disabled</string>
+    <string name="sms_delivered">SMS delivered</string>
+    <string name="error_sms_not_delivered">Error sms not delivered</string>
+    <string name="telephone_number">Please enter you telephone number</string>
+    <string name="telephone_number_country">Telephone number must be preceded by country code</string>
+    <string name="image_directory_creation_faild">Failed to create image directory</string>
+    <string name="server_not_online">The server is not online or the URL address is not correct</string>
+    <string name="phone_not_in_server">Phone number not in server&amp;s contact list</string>
+    <string name="server_on_line">Server Online</string>
+    <string name="device_not_online">Your device is not online</string>
+    <string name="check_url">Cannot contact the server, check the URL or try to check connection in the settings area</string>
+    <string name="form_not_available">The form is not available on server</string>
+    <string name="error">Error</string>
+    <string name="forms_sent">Forms correctly sent</string>
+    <string name="offline">Offline</string>
+    <string name="no_forms_to_download">There are no forms to download</string>
+    <string name="forms_downloaded">Forms correctly downloaded</string>
+    <string name="audio_capture">audio capture</string>
+    <string name="chose_audio">choose audio</string>
+    <string name="no_answer_recorded">Warning: does not match any answers. No answer recorded</string>
+    <string name="sending_data">Sending data to server...</string>
+    <string name="wait">Please wait...</string>
+    <string name="time_before">Time before re-submit allowed</string>
+    <string name="sending_method">Sending Method</string>
+
+    <string name="exit_dialog">Do you want to quit?</string>
+    <string name="exit_dialog_title">Exit</string>
+    <string name="confirm">Yes</string>
+
+    <string name="exit_dialog_title_form">Exit from the form</string>
+    <string name="exit_dialog_form">Do you want to exit from the form?</string>
+
+    <string name="double_back">Please click BACK again to exit</string>
+
+
+    <string name="digit_server_directory">Digit virtual directory</string>
+    <string name="server_directory">Virtual directory</string>
+
+    <string name="take_signature">Take Signature</string>
+
+    <string name="exit_button">EXIT</string>
+    <string name="on_request">On Request</string>
 	
 </resources>

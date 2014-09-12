@@ -29,7 +29,6 @@ import it.fabaris.wfp.activities.PreferencesActivity;
 import it.fabaris.wfp.activities.R;
 import it.fabaris.wfp.application.Collect;
 import it.fabaris.wfp.utility.FileUtils;
-import it.fabaris.wfp.view.ODKView;
 
 import java.io.File;
 
@@ -78,14 +77,16 @@ public class ImageWidget extends QuestionWidget implements IBinaryWidget {
     private static int RESULT_OK = 5;
     private static int RESULT_CANCELED = 8;
 
+
     public ImageWidget(Context context, final FormEntryPrompt prompt) {
         super(context, prompt);
-        mWaitingForData = false;
-        setOrientation(LinearLayout.VERTICAL);
 
+        mWaitingForData = false;
         mInstanceFolder =
             FormEntryActivity.mInstancePath.substring(0,
                 FormEntryActivity.mInstancePath.lastIndexOf("/") + 1);
+
+        setOrientation(LinearLayout.VERTICAL);
 
         mErrorTextView = new TextView(context);
         mErrorTextView.setText("Selected file is not a valid image");
@@ -96,7 +97,7 @@ public class ImageWidget extends QuestionWidget implements IBinaryWidget {
         mCaptureButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mAnswerFontsize);
         mCaptureButton.setPadding(20, 20, 20, 20);
         mCaptureButton.setEnabled(!prompt.isReadOnly());
-
+        
         /**
          * launch capture intent on click
          */
@@ -105,7 +106,6 @@ public class ImageWidget extends QuestionWidget implements IBinaryWidget {
             {
                 mErrorTextView.setVisibility(View.GONE);
                 Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                setOrientation(LinearLayout.VERTICAL);
                 // We give the camera an absolute filename/path where to put the
                 // picture because of bug:
                 // http://code.google.com/p/android/issues/detail?id=1480
@@ -117,18 +117,21 @@ public class ImageWidget extends QuestionWidget implements IBinaryWidget {
                 // if this gets modified, the onActivityResult in
                 // FormEntyActivity will also need to be updated.
                 i.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Collect.TMPFILE_PATH)));
-
-                mWaitingForData = true;
-
                 try 
                 {
                     ((Activity) getContext()).startActivityForResult(i, FormEntryActivity.IMAGE_CAPTURE);
+                    mWaitingForData = true;
+                    //********************
+                    //mBinaryName = 
+                    //********************
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(getContext(),
                         getContext().getString(R.string.activity_not_found, "image capture"),
                         Toast.LENGTH_SHORT);
-                    mWaitingForData = false;
                 }
+                //*((FormEntryActivity)getContext()).refreshCurrentView(prompt.getIndex()); 
+                //mBinaryName = prompt.getAnswerText();
+                //previewPhoto();
             }
         });
 
@@ -147,11 +150,12 @@ public class ImageWidget extends QuestionWidget implements IBinaryWidget {
             public void onClick(View v) {
                 mErrorTextView.setVisibility(View.GONE);
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
                 i.setType("image/*");
 
                 try {
-                    ((Activity) getContext()).startActivityForResult(i, FormEntryActivity.HIERARCHY_ACTIVITY);
-                     mWaitingForData = true;
+                    ((Activity) getContext()).startActivityForResult(i, FormEntryActivity.IMAGE_CHOOSER);
+                    mWaitingForData = true;
                     
                     //mBinaryName = prompt.getAnswerText();
                     //previewPhoto();
